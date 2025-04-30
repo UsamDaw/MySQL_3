@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registrering</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      max-width: 500px;
+      margin: auto;
+      background-color: #f0f0f0;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      padding: 0.7rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .message {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 5px;
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <h2>Registrer ny bruker</h2>
+  <form id="registerForm">
+    <label for="brukernavn">Brukernavn:</label>
+    <input type="text" id="brukernavn" name="brukernavn" required>
+
+    <label for="passord">Passord:</label>
+    <input type="password" id="passord" name="passord" required>
+
+    <label for="rolle">Velg rolle:</label>
+    <select id="rolle" name="rolle" required>
+      <option value="lærer">Lærer</option>
+      <option value="elev">Elev</option>
+    </select>
+
+    <button type="submit">Registrer</button>
+    <button><a href="index.html">Logg inn?</a></button>
+  </form>
+
+  <div id="melding" class="message" style="display:none;"></div>
+
+  <script>
+    const form = document.getElementById('registerForm');
+    const melding = document.getElementById('melding');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        brukernavn: form.brukernavn.value,
+        passord: form.passord.value,
+        rolle: form.rolle.value
+      };
+
+      try {
+        const res = await fetch('http://localhost:3000/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        melding.style.display = 'block';
+        if (res.ok) {
+          melding.className = 'message success';
+          melding.textContent = result.message;
+          form.reset();
+        } else {
+          melding.className = 'message error';
+          melding.textContent = result.message || 'Noe gikk galt.';
+        }
+      } catch (err) {
+        melding.style.display = 'block';
+        melding.className = 'message error';
+        melding.textContent = 'Feil ved tilkobling til server.';
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>

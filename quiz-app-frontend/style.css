@@ -1,0 +1,390 @@
+/* Globale stiler */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  body {
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f7fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  header h1 {
+    margin-bottom: 0.5rem;
+  }
+  
+  nav {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  nav a:hover {
+    background-color: #34495e;
+  }
+  
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  footer {
+    background-color: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+  }
+
+  #logout2 {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.6rem 1.2rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  /* Innlogging og registrering */
+  .login-box {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    max-width: 400px;
+    margin: 2rem auto;
+  }
+  
+  .login-box h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+  }
+  
+  .login-box input {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .login-box button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+  }
+  
+  .login-box button:hover {
+    background-color: #2980b9;
+  }
+  
+  #feilmelding {
+    color: #e74c3c;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  /* Dashboard */
+  .dashboard {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+  }
+  
+  .dashboard h2 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+  }
+  
+  .dashboard button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.6rem 1.2rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .dashboard button:hover {
+    background-color: #2980b9;
+  }
+  
+  #quizliste {
+    list-style-type: none;
+    margin: 1rem 0;
+  }
+  
+  #quizliste li {
+    margin-bottom: 0.5rem;
+  }
+  
+  #quizliste a {
+    display: block;
+    padding: 0.8rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+  
+  #quizliste a:hover {
+    background-color: #e9ecef;
+  }
+  
+  /* Quiz-spesifikke stiler */
+  #opprett-quiz {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  #legg-til-spørsmål {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+  
+  .form-group input, .form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  #spørsmål-liste {
+    margin-top: 2rem;
+  }
+  
+  #spørsmål-oversikt {
+    list-style-type: none;
+    margin-top: 1rem;
+  }
+  
+  #spørsmål-oversikt li {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+    border-left: 4px solid #3498db;
+  }
+  
+  /* Elev quiz-visning */
+  #spørsmål-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .spørsmål {
+    margin-bottom: 2rem;
+  }
+  
+  .spørsmål h3 {
+    margin-bottom: 1rem;
+  }
+  
+  .svaralternativer {
+    list-style-type: none;
+  }
+  
+  .svaralternativ {
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .svaralternativ:hover {
+    background-color: #e9ecef;
+  }
+  
+  .svaralternativ.valgt {
+    background-color: #bee5eb;
+    border-left: 4px solid #17a2b8;
+  }
+  
+  #navigasjon-knapper {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+  
+  #navigasjon-knapper button {
+    padding: 0.6rem 1.2rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  #navigasjon-knapper button:disabled {
+    background-color: #b3d7ea;
+    cursor: not-allowed;
+  }
+  
+  #tid-gjenstår {
+    font-weight: bold;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  /* Resultat-side stiler */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+  }
+  
+  table th, table td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+  }
+  
+  #quiz-velger {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  #statistikk-oversikt, #progresjon-graf {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  #graf-container {
+    height: 300px;
+    margin-top: 1rem;
+  }
+
+  .login-box button:last-of-type {
+    background-color: #2ecc71; /* Grønn farge for registreringsknappen */
+  }
+  
+  .login-box button:last-of-type:hover {
+    background-color: #27ae60; /* Mørkere grønn på hover */
+  }
+  
+  
+  /* Responsivt design */
+  @media (max-width: 768px) {
+    header, main, footer {
+      padding: 1rem;
+    }
+    
+    nav {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    
+    #navigasjon-knapper {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    #navigasjon-knapper button {
+      width: 100%;
+    }
+  }
+  
+  /* Universell utforming */
+  :focus {
+    outline: 3px solid #4a90e2;
+    outline-offset: 2px;
+  }
+  
+  button:focus, a:focus {
+    outline: 3px solid #4a90e2;
+    outline-offset: 2px;
+  }
+  
+  /* Høy kontrast */
+  @media (prefers-contrast: high) {
+    body {
+      color: black;
+      background-color: white;
+    }
+    
+    a {
+      color: #0000EE;
+    }
+    
+    a:visited {
+      color: #551A8B;
+    }
+  }

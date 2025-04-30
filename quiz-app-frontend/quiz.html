@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Quiz-applikasjon</h1>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="resultater.html">Resultater</a>
+      <button onclick="loggUt()" id="logout2">Logg ut</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Lærer visning -->
+    <div id="lærer-visning" style="display: none;">
+      <div id="opprett-quiz">
+        <h2>Opprett ny quiz</h2>
+        <input type="text" id="quiz-navn" placeholder="Quiznavn" />
+        <input type="number" id="tidsgrense" placeholder="Tidsgrense (minutter)" min="0" />
+        <button onclick="opprettQuiz()">Opprett quiz</button>
+      </div>
+      
+      <div id="legg-til-spørsmål" style="display: none;">
+        <h2>Legg til spørsmål</h2>
+        <h3 id="valgt-quiz-navn"></h3>
+        
+        <form id="spørsmål-form">
+          <div class="form-group">
+            <label for="spørsmålstekst">Spørsmål:</label>
+            <textarea id="spørsmålstekst" required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="riktig-svar">Riktig svar:</label>
+            <input type="text" id="riktig-svar" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="feil-svar-1">Feil svar 1:</label>
+            <input type="text" id="feil-svar-1" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="feil-svar-2">Feil svar 2:</label>
+            <input type="text" id="feil-svar-2" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="feil-svar-3">Feil svar 3:</label>
+            <input type="text" id="feil-svar-3" required />
+          </div>
+          
+          <button type="submit">Legg til spørsmål</button>
+        </form>
+        
+        <div id="spørsmål-liste">
+          <h3>Spørsmål i denne quizen:</h3>
+          <ul id="spørsmål-oversikt"></ul>
+        </div>
+        
+        <button onclick="ferdigMedQuiz()">Ferdig med denne quizen</button>
+      </div>
+    </div>
+    
+    <!-- Elev visning -->
+    <div id="elev-visning" style="display: none;">
+      <div id="ta-quiz">
+        <h2 id="quiz-tittel"></h2>
+        <p id="tid-gjenstår"></p>
+        <div id="spørsmål-container"></div>
+        <div id="navigasjon-knapper">
+          <button id="forrige-knapp" onclick="navigerTilForrigeSpørsmål()" disabled>Forrige</button>
+          <button id="neste-knapp" onclick="navigerTilNesteSpørsmål()">Neste</button>
+          <button id="fullfør-knapp" onclick="fullførQuiz()" style="display: none;">Fullfør Quiz</button>
+        </div>
+      </div>
+      
+      <div id="quiz-resultat" style="display: none;">
+        <h2>Resultater</h2>
+        <p id="poengsum"></p>
+        <div id="resultat-detaljer"></div>
+        <button onclick="window.location.href='dashboard.html'">Tilbake til dashboard</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Quiz-applikasjon for skoler</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initQuizSide();
+    });
+  </script>
+</body>
+</html>

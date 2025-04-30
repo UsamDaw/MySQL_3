@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resultater</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Quiz-applikasjon</h1>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="quiz.html">Quiz</a>
+      <button onclick="loggUt()" id="logout2">Logg ut</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Lærer visning -->
+    <div id="lærer-resultater" style="display: none;">
+      <h2>Quiz resultater</h2>
+      <select id="quiz-velger" onchange="hentResultaterForQuiz()">
+        <option value="">Velg quiz</option>
+      </select>
+      
+      <div id="resultat-oversikt">
+        <h3 id="valgt-quiz-statistikk"></h3>
+        <table id="resultat-tabell">
+          <thead>
+            <tr>
+              <th>Elev</th>
+              <th>Poengsum</th>
+              <th>Fullført dato</th>
+              <th>Detaljer</th>
+            </tr>
+          </thead>
+          <tbody id="resultat-data"></tbody>
+        </table>
+      </div>
+      
+      <div id="statistikk-oversikt">
+        <h3>Statistikk</h3>
+        <p id="gjennomsnitt"></p>
+        <p id="høyeste-score"></p>
+        <p id="laveste-score"></p>
+        <div id="statistikk-graf"></div>
+      </div>
+    </div>
+    
+    <!-- Elev visning -->
+    <div id="elev-resultater" style="display: none;">
+      <h2>Min fremgang</h2>
+      <div id="progresjon-oversikt">
+        <table id="progresjon-tabell">
+          <thead>
+            <tr>
+              <th>Quiz navn</th>
+              <th>Poengsum</th>
+              <th>Fullført dato</th>
+            </tr>
+          </thead>
+          <tbody id="progresjon-data"></tbody>
+        </table>
+      </div>
+      
+      <div id="progresjon-graf">
+        <h3>Min utvikling over tid</h3>
+        <div id="graf-container"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Quiz-applikasjon for skoler</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initResultaterSide();
+    });
+  </script>
+</body>
+</html>
