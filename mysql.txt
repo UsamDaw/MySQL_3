@@ -1,0 +1,57 @@
+CREATE DATABASE quiz;
+USE quiz;
+CREATE TABLE brukere (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    brukernavn VARCHAR(50) NOT NULL UNIQUE,
+    passord VARCHAR(255) NOT NULL,
+    rolle ENUM('lrer', 'elev') NOT NULL
+);
+
+CREATE TABLE quiz (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    lrer_id INT,
+    quiz_navn VARCHAR(100) NOT NULL,
+    opprettet_dato DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (lrer_id) REFERENCES brukere(id)
+);
+
+CREATE TABLE sprsml (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quiz_id INT,
+    sprsmlstekst TEXT NOT NULL,
+    riktig_svar VARCHAR(255) NOT NULL,
+    feil_svar_1 VARCHAR(255),
+    feil_svar_2 VARCHAR(255),
+    feil_svar_3 VARCHAR(255),
+    FOREIGN KEY (quiz_id) REFERENCES quiz(id)
+);
+
+CREATE TABLE besvarelser (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    elev_id INT,
+    quiz_id INT,
+    fullfrt_dato DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (elev_id) REFERENCES brukere(id),
+    FOREIGN KEY (quiz_id) REFERENCES quiz(id)
+);
+
+CREATE TABLE elevsvar (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    besvarelse_id INT,
+    sprsml_id INT,
+    gitt_svar VARCHAR(255),
+    er_riktig BOOLEAN,
+    FOREIGN KEY (besvarelse_id) REFERENCES besvarelser(id),
+    FOREIGN KEY (sprsml_id) REFERENCES sprsml(id)
+);
+
+CREATE TABLE resultat (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    besvarelse_id INT,
+    poengsum INT,
+    FOREIGN KEY (besvarelse_id) REFERENCES besvarelser(id)
+);
+
+
+
+

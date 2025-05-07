@@ -1,12 +1,12 @@
 const db = require('../db');
 
 exports.opprettQuiz = async (req, res) => {
-  const { lærer_id, quiz_navn } = req.body;
+  const { lrer_id, quiz_navn } = req.body;
 
   try {
     const [result] = await db.query(
-      'INSERT INTO quiz (lærer_id, quiz_navn) VALUES (?, ?)',
-      [lærer_id, quiz_navn]
+      'INSERT INTO quiz (lrer_id, quiz_navn) VALUES (?, ?)',
+      [lrer_id, quiz_navn]
     );
     res.status(201).json({ message: 'Quiz opprettet', quizId: result.insertId });
   } catch (err) {
@@ -15,18 +15,18 @@ exports.opprettQuiz = async (req, res) => {
   }
 };
 
-exports.leggTilSpørsmål = async (req, res) => {
-  const { quiz_id, spørsmålstekst, riktig_svar, feil_svar_1, feil_svar_2, feil_svar_3 } = req.body;
+exports.leggTilsprsml = async (req, res) => {
+  const { quiz_id, sprsmlstekst, riktig_svar, feil_svar_1, feil_svar_2, feil_svar_3 } = req.body;
 
   try {
     await db.query(
-      'INSERT INTO spørsmål (quiz_id, spørsmålstekst, riktig_svar, feil_svar_1, feil_svar_2, feil_svar_3) VALUES (?, ?, ?, ?, ?, ?)',
-      [quiz_id, spørsmålstekst, riktig_svar, feil_svar_1, feil_svar_2, feil_svar_3]
+      'INSERT INTO sprsml (quiz_id, sprsmlstekst, riktig_svar, feil_svar_1, feil_svar_2, feil_svar_3) VALUES (?, ?, ?, ?, ?, ?)',
+      [quiz_id, sprsmlstekst, riktig_svar, feil_svar_1, feil_svar_2, feil_svar_3]
     );
-    res.status(201).json({ message: 'Spørsmål lagt til' });
+    res.status(201).json({ message: 'sprsml lagt til' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Feil ved lagring av spørsmål' });
+    res.status(500).json({ message: 'Feil ved lagring av sprsml' });
   }
 };
 
@@ -40,20 +40,20 @@ exports.hentAlleQuizer = async (req, res) => {
   }
 };
 
-exports.hentSpørsmålForQuiz = async (req, res) => {
+exports.hentsprsmlForQuiz = async (req, res) => {
     const { quizId } = req.params;
   
     try {
-      const [spørsmål] = await db.query('SELECT * FROM spørsmål WHERE quiz_id = ?', [quizId]);
+      const [sprsml] = await db.query('SELECT * FROM sprsml WHERE quiz_id = ?', [quizId]);
       const [quizinfo] = await db.query('SELECT tidsgrense_minutter FROM quiz WHERE id = ?', [quizId]);
   
       res.status(200).json({
-        spørsmål,
+        sprsml,
         tidsgrense: quizinfo[0]?.tidsgrense_minutter || 0
       });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: 'Kunne ikke hente spørsmål' });
+      res.status(500).json({ message: 'Kunne ikke hente sprsml' });
     }
   };
   
@@ -83,7 +83,6 @@ exports.hentSpørsmålForQuiz = async (req, res) => {
   
             const poengsum = r[0].riktige;
   
-            // Sjekk om vurdering allerede finnes (unngå dobbel retting)
             const [eksisterende] = await db.query(
               'SELECT * FROM resultat WHERE besvarelse_id = ?',
               [besvarelseId]
@@ -112,13 +111,13 @@ exports.hentSpørsmålForQuiz = async (req, res) => {
   
   
   exports.lagreElevSvar = async (req, res) => {
-    const { besvarelse_id, spørsmål_id, gitt_svar, riktig_svar } = req.body;
+    const { besvarelse_id, sprsml_id, gitt_svar, riktig_svar } = req.body;
     const er_riktig = gitt_svar === riktig_svar;
   
     try {
       await db.query(
-        'INSERT INTO elevsvar (besvarelse_id, spørsmål_id, gitt_svar, er_riktig) VALUES (?, ?, ?, ?)',
-        [besvarelse_id, spørsmål_id, gitt_svar, er_riktig]
+        'INSERT INTO elevsvar (besvarelse_id, sprsml_id, gitt_svar, er_riktig) VALUES (?, ?, ?, ?)',
+        [besvarelse_id, sprsml_id, gitt_svar, er_riktig]
       );
       res.status(201).json({ message: 'Elevsvar lagret', er_riktig });
     } catch (err) {
@@ -156,7 +155,7 @@ exports.hentSpørsmålForQuiz = async (req, res) => {
 
     try {
       const [resultater] = await db.query(`
-        SELECT b.id AS besvarelse_id, u.brukernavn, r.poengsum, b.fullført_dato
+        SELECT b.id AS besvarelse_id, u.brukernavn, r.poengsum, b.completed_dato
         FROM resultat r
         JOIN besvarelser b ON r.besvarelse_id = b.id
         JOIN brukere u ON b.elev_id = u.id
@@ -175,7 +174,7 @@ exports.hentSpørsmålForQuiz = async (req, res) => {
   
     try {
       const [progresjon] = await db.query(`
-        SELECT q.quiz_navn, r.poengsum, b.fullført_dato
+        SELECT q.quiz_navn, r.poengsum, b.completed_dato
         FROM resultat r
         JOIN besvarelser b ON r.besvarelse_id = b.id
         JOIN quiz q ON b.quiz_id = q.id

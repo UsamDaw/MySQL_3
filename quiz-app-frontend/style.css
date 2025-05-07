@@ -180,7 +180,7 @@
     margin-bottom: 2rem;
   }
   
-  #legg-til-spørsmål {
+  #legg-til-sprsml {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -209,16 +209,16 @@
     resize: vertical;
   }
   
-  #spørsmål-liste {
+  #sprsml-liste {
     margin-top: 2rem;
   }
   
-  #spørsmål-oversikt {
+  #sprsml-oversikt {
     list-style-type: none;
     margin-top: 1rem;
   }
   
-  #spørsmål-oversikt li {
+  #sprsml-oversikt li {
     background-color: #f8f9fa;
     padding: 1rem;
     margin-bottom: 0.5rem;
@@ -227,7 +227,7 @@
   }
   
   /* Elev quiz-visning */
-  #spørsmål-container {
+  #sprsml-container {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -235,11 +235,11 @@
     margin-bottom: 1rem;
   }
   
-  .spørsmål {
+  .sprsml {
     margin-bottom: 2rem;
   }
   
-  .spørsmål h3 {
+  .sprsml h3 {
     margin-bottom: 1rem;
   }
   
@@ -285,7 +285,7 @@
     cursor: not-allowed;
   }
   
-  #tid-gjenstår {
+  #tid-gjenstr {
     font-weight: bold;
     margin-bottom: 1rem;
     font-size: 1.2rem;
@@ -332,11 +332,11 @@
   }
 
   .login-box button:last-of-type {
-    background-color: #2ecc71; /* Grønn farge for registreringsknappen */
+    background-color: #2ecc71; /* Grnn farge for registreringsknappen */
   }
   
   .login-box button:last-of-type:hover {
-    background-color: #27ae60; /* Mørkere grønn på hover */
+    background-color: #27ae60; /* Mrkere grnn p hover */
   }
   
   
@@ -373,7 +373,7 @@
     outline-offset: 2px;
   }
   
-  /* Høy kontrast */
+  /* Hy kontrast */
   @media (prefers-contrast: high) {
     body {
       color: black;

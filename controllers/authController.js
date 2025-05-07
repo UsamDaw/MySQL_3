@@ -6,14 +6,14 @@ const { body, validationResult } = require('express-validator');
 exports.registerUser = [
   // Validering av input
   body('brukernavn')
-    .isLength({ min: 3, max: 20 }).withMessage('Brukernavn må være mellom 3 og 20 tegn.')
+    .isLength({ min: 3, max: 20 }).withMessage('Brukernavn må vre mellom 3 og 20 tegn.')
     .matches(/^[a-zA-Z0-9]+$/).withMessage('Brukernavn kan kun inneholde alfanumeriske tegn.'),
   body('passord')
-    .isLength({ min: 8 }).withMessage('Passordet må være minst 8 tegn.')
+    .isLength({ min: 8 }).withMessage('Passordet må vre minst 8 tegn.')
     .matches(/[0-9]/).withMessage('Passordet må inneholde minst ett tall.')
     .matches(/[a-zA-Z]/).withMessage('Passordet må inneholde minst ett bokstavtegn.'),
   body('rolle')
-    .isIn(['lærer', 'elev']).withMessage('Rolle må være enten "lærer" eller "elev".'),
+    .isIn(['lrer', 'elev']).withMessage('Rolle må vre enten "lærer" eller "elev".'),
 
   // Håndtere registreringen etter validering
   async (req, res) => {
@@ -27,7 +27,7 @@ exports.registerUser = [
     }
 
     const { brukernavn, passord, rolle } = req.body;
-    console.log('[REGISTRERING] Mottatt forespørsel:', { brukernavn, rolle });
+    console.log('[REGISTRERING] Mottatt foresprsel:', { brukernavn, rolle });
 
     try {
       // Sjekk om brukernavnet allerede finnes
@@ -41,7 +41,7 @@ exports.registerUser = [
 
       // Hash passordet
       const hashedPassword = await bcrypt.hash(passord, 10);
-      console.log('[REGISTRERING] Passord hash fullført');
+      console.log('[REGISTRERING] Passord hash fullfrt');
 
       // Sett inn i databasen
       await db.query(
@@ -72,7 +72,7 @@ exports.registerUser = [
 // Innlogging av bruker
 exports.loginUser = async (req, res) => {
   const { brukernavn, passord } = req.body;
-  console.log('[LOGIN] Mottatt innloggingsforsøk for:', brukernavn);
+  console.log('[LOGIN] Mottatt innloggingsforsk for:', brukernavn);
 
   try {
     const [rows] = await db.query('SELECT * FROM brukere WHERE brukernavn = ?', [brukernavn]);

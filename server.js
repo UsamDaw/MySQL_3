@@ -14,7 +14,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/quiz', quizRoutes);
 
-app.get('/api/quiz/test/:id/spørsmål', (req, res) => {
+app.get('/api/quiz/test/:id/sprsml', (req, res) => {
   res.json({ id: req.params.id, test: true });
 });
 

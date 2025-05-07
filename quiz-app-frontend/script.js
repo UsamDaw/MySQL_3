@@ -39,7 +39,7 @@ function hentBruker() {
 // ========== DASHBOARD-FUNKSJONALITET ==========
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Sjekk hvilken side vi er på
+  // Sjekk hvilken side vi er p
   const currentPage = window.location.pathname.split('/').pop();
   
   if (currentPage === 'dashboard.html') {
@@ -57,7 +57,7 @@ function initDashboard() {
 
   document.getElementById('velkommen').textContent = `Velkommen, ${bruker.brukernavn} (${bruker.rolle})`;
 
-  if (bruker.rolle === 'lærer') {
+  if (bruker.rolle === 'lrer') {
     document.getElementById('innhold').innerHTML = `
       <h3>Quiz-administrasjon</h3>
       <button onclick="window.location.href='quiz.html'">Opprett ny quiz</button>
@@ -65,7 +65,7 @@ function initDashboard() {
     `;
   } else {
     document.getElementById('innhold').innerHTML = `
-      <h3>Velg en quiz å ta:</h3>
+      <h3>Velg en quiz  ta:</h3>
       <ul id="quizliste"></ul>
     `;
     hentTilgjengeligeQuizer();
@@ -90,14 +90,14 @@ function initQuizSide() {
   const bruker = hentBruker();
   if (!bruker) return;
 
-  // Sjekk om vi skal vise lærer- eller elev-visning
-  if (bruker.rolle === 'lærer') {
-    document.getElementById('lærer-visning').style.display = 'block';
+  // Sjekk om vi skal vise lrer- eller elev-visning
+  if (bruker.rolle === 'lrer') {
+    document.getElementById('lrer-visning').style.display = 'block';
     
     // Sjekk om vi jobber med en eksisterende quiz
     const aktivQuiz = JSON.parse(localStorage.getItem('aktivQuiz'));
     if (aktivQuiz) {
-      visSpørsmålsForm(aktivQuiz);
+      visSprsmlsForm(aktivQuiz);
     }
   } else {
     document.getElementById('elev-visning').style.display = 'block';
@@ -114,125 +114,130 @@ function initQuizSide() {
   }
 }
 
-// ========== LÆRER: QUIZ-OPPRETTELSE ==========
+// ========== LRER: QUIZ-OPPRETTELSE ==========
 
 async function opprettQuiz() {
   const bruker = hentBruker();
   const quizNavn = document.getElementById('quiz-navn').value;
   const tidsgrense = document.getElementById('tidsgrense').value || 0;
-  
   if (!quizNavn) {
     alert('Vennligst angi et quiz-navn');
     return;
   }
-  
   try {
     const res = await fetch('http://localhost:3000/api/quiz/opprett', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        lærer_id: bruker.id, 
+        lrer_id: bruker.id, 
         quiz_navn: quizNavn,
         tidsgrense_minutter: parseInt(tidsgrense)
       })
     });
-    
     const data = await res.json();
-    
     if (res.ok) {
-      // Lagre aktiv quiz i localStorage
       const aktivQuiz = {
-        id: data.quizId,
+        id: data.quizId, // 💡 Burada id'nin kesinlikle sayı olduğundan emin olduk
         navn: quizNavn,
         tidsgrense: parseInt(tidsgrense)
       };
-      
       localStorage.setItem('aktivQuiz', JSON.stringify(aktivQuiz));
-      visSpørsmålsForm(aktivQuiz);
+      visSprsmlsForm(aktivQuiz);
     } else {
       alert('Feil ved opprettelse av quiz: ' + data.message);
     }
   } catch (err) {
     console.error('Feil ved API-kall:', err);
-    alert('En feil oppstod. Prøv igjen senere.');
+    alert('En feil oppstod. Prv igjen senere.');
   }
 }
 
-function visSpørsmålsForm(quizInfo) {
+function visSprsmlsForm(quizInfo) {
   document.getElementById('opprett-quiz').style.display = 'none';
-  document.getElementById('legg-til-spørsmål').style.display = 'block';
+  document.getElementById('legg-til-sprsml').style.display = 'block';
   document.getElementById('valgt-quiz-navn').textContent = `Quiz: ${quizInfo.navn} ${quizInfo.tidsgrense > 0 ? `(Tidsgrense: ${quizInfo.tidsgrense} minutter)` : ''}`;
 
-  // Sett opp skjema for å legge til spørsmål
-  document.getElementById('spørsmål-form').addEventListener('submit', function(e) {
+  // Sett opp skjema for  legge til sprsml
+  document.getElementById('sprsml-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    leggTilSpørsmål();
+    leggTilSprsml();
   });
 
-  // Last inn eksisterende spørsmål hvis vi jobber med en eksisterende quiz
-  hentSpørsmålForQuiz(quizInfo.id);
+  // Last inn eksisterende sprsml hvis vi jobber med en eksisterende quiz
+  hentSprsmlForQuiz(quizInfo.id);
 }
 
-async function leggTilSpørsmål() {
+async function leggTilSprsml() {
   const aktivQuiz = JSON.parse(localStorage.getItem('aktivQuiz'));
-  
-  const spørsmålData = {
+ 
+  if (!aktivQuiz || !aktivQuiz.id) {
+    alert("Ingen aktiv quiz funnet. Prv  opprette en ny.");
+    return;
+  }
+ 
+  const sprsmlData = {
     quiz_id: aktivQuiz.id,
-    spørsmålstekst: document.getElementById('spørsmålstekst').value,
+    sprsmlstekst: document.getElementById('sprsmlstekst').value,
     riktig_svar: document.getElementById('riktig-svar').value,
     feil_svar_1: document.getElementById('feil-svar-1').value,
     feil_svar_2: document.getElementById('feil-svar-2').value,
     feil_svar_3: document.getElementById('feil-svar-3').value
   };
-  
+ 
   try {
-    const res = await fetch('http://localhost:3000/api/quiz/spørsmål', {
+    const res = await fetch('http://localhost:3000/api/quiz/sprsml', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(spørsmålData)
+      body: JSON.stringify(sprsmlData)
     });
-    
+ 
     const data = await res.json();
+    console.log(data);
     
     if (res.ok) {
-      // Nullstill skjemaet
-      document.getElementById('spørsmål-form').reset();
-      
-      // Last inn spørsmål på nytt
-      hentSpørsmålForQuiz(aktivQuiz.id);
-      
-      alert('Spørsmål lagt til!');
+      document.getElementById('sprsml-form').reset();
+      hentSprsmlForQuiz(aktivQuiz.id);
+      alert('Sprsml lagt til!');
     } else {
-      alert('Feil ved lagring av spørsmål: ' + data.message);
+      alert('Feil ved lagring av sprsml: ' + data.message);
     }
   } catch (err) {
     console.error('Feil ved API-kall:', err);
-    alert('En feil oppstod. Prøv igjen senere.');
+    alert('En feil oppstod. Prv igjen senere.');
   }
 }
 
-async function hentSpørsmålForQuiz(quizId) {
+async function hentSprsmlForQuiz(quizId) {
+  if (!quizId || isNaN(quizId)) {
+    console.error("Ugyldig quizId:", quizId);
+    return;
+  }
+ 
   try {
-    const res = await fetch(`http://localhost:3000/api/quiz/${quizId}/spørsmål`);
+    const res = await fetch(`http://localhost:3000/api/quiz/${quizId}/sprsml`);
+    if (!res.ok) {
+      const tekst = await res.text();
+      throw new Error(`Feil: ${res.status} - ${tekst}`);
+    }
+ 
     const data = await res.json();
-    
-    const spørsmålListe = document.getElementById('spørsmål-oversikt');
-    spørsmålListe.innerHTML = '';
-    
-    if (data.spørsmål && data.spørsmål.length > 0) {
-      data.spørsmål.forEach((sp, index) => {
+    const sprsmlListe = document.getElementById('sprsml-oversikt');
+    sprsmlListe.innerHTML = '';
+ 
+    if (data.sprsml && data.sprsml.length > 0) {
+      data.sprsml.forEach((sp, index) => {
         const li = document.createElement('li');
         li.innerHTML = `
-          <strong>Spørsmål ${index + 1}:</strong> ${sp.spørsmålstekst}<br>
-          <em>Riktig svar:</em> ${sp.riktig_svar}
+<strong>Sprsml ${index + 1}:</strong> ${sp.sprsmlstekst}<br>
+<em>Riktig svar:</em> ${sp.riktig_svar}
         `;
-        spørsmålListe.appendChild(li);
+        sprsmlListe.appendChild(li);
       });
     } else {
-      spørsmålListe.innerHTML = '<li>Ingen spørsmål lagt til ennå.</li>';
+      sprsmlListe.innerHTML = '<li>Ingen sprsml lagt til enn.</li>';
     }
   } catch (err) {
-    console.error('Feil ved API-kall:', err);
+    console.error('Feil ved henting av sprsml:', err);
   }
 }
 
@@ -244,8 +249,8 @@ function ferdigMedQuiz() {
 
 // ========== ELEV: QUIZ-BESVARELSE ==========
 let currentQuizData = {
-  spørsmål: [],
-  aktivtSpørsmålIndex: 0,
+  sprsml: [],
+  aktivtSprsmlIndex: 0,
   svar: [],
   tidBegynt: null,
   tidsgrense: 0,
@@ -255,11 +260,11 @@ let currentQuizData = {
 
 async function startQuiz(quizId) {
   try {
-    const res = await fetch(`http://localhost:3000/api/quiz/${quizId}/spørsmål`);
+    const res = await fetch(`http://localhost:3000/api/quiz/${quizId}/sprsml`);
     const data = await res.json();
     
-    if (!data.spørsmål || data.spørsmål.length === 0) {
-      alert('Denne quizen har ingen spørsmål ennå.');
+    if (!data.sprsml || data.sprsml.length === 0) {
+      alert('Denne quizen har ingen sprsml enn.');
       window.location.href = 'dashboard.html';
       return;
     }
@@ -277,9 +282,9 @@ async function startQuiz(quizId) {
     if (besvarelseRes.ok) {
       // Sett opp quiz-data
       currentQuizData = {
-        spørsmål: data.spørsmål,
-        aktivtSpørsmålIndex: 0,
-        svar: Array(data.spørsmål.length).fill(null),
+        sprsml: data.sprsml,
+        aktivtSprsmlIndex: 0,
+        svar: Array(data.sprsml.length).fill(null),
         tidBegynt: new Date(),
         tidsgrense: data.tidsgrense || 0,
         timer: null,
@@ -289,14 +294,14 @@ async function startQuiz(quizId) {
       // Lagre besvarelseId i localStorage
       localStorage.setItem('besvarelseId', besvarelseData.besvarelseId);
       
-      // Last inn første spørsmål
-      visAktivtSpørsmål();
+      // Last inn frste sprsml
+      visAktivtSprsml();
       
       // Sett opp timer hvis tidsgrense er satt
       if (currentQuizData.tidsgrense > 0) {
         startTidtaker();
       } else {
-        document.getElementById('tid-gjenstår').style.display = 'none';
+        document.getElementById('tid-gjenstr').style.display = 'none';
       }
       
     // Hent quiznavn
@@ -313,7 +318,7 @@ async function startQuiz(quizId) {
   }
 } catch (err) {
   console.error('Feil ved API-kall:', err);
-  alert('En feil oppstod. Prøv igjen senere.');
+  alert('En feil oppstod. Prv igjen senere.');
   window.location.href = 'dashboard.html';
 }
 }
@@ -322,36 +327,36 @@ function startTidtaker() {
 const sluttTid = new Date(currentQuizData.tidBegynt.getTime() + currentQuizData.tidsgrense * 60000);
 
 function oppdaterTid() {
-  const nå = new Date();
-  const differanse = sluttTid - nå;
+  const n = new Date();
+  const differanse = sluttTid - n;
   
   if (differanse <= 0) {
     clearInterval(currentQuizData.timer);
-    document.getElementById('tid-gjenstår').textContent = 'Tiden er ute!';
-    fullførQuiz(true);
+    document.getElementById('tid-gjenstr').textContent = 'Tiden er ute!';
+    fullfrQuiz(true);
     return;
   }
   
   const minutter = Math.floor(differanse / 60000);
   const sekunder = Math.floor((differanse % 60000) / 1000);
-  document.getElementById('tid-gjenstår').textContent = `Tid gjenstår: ${minutter}m ${sekunder}s`;
+  document.getElementById('tid-gjenstr').textContent = `Tid gjenstr: ${minutter}m ${sekunder}s`;
 }
 
-oppdaterTid(); // Kjør umiddelbart
+oppdaterTid(); // Kjr umiddelbart
 currentQuizData.timer = setInterval(oppdaterTid, 1000);
 }
 
-function visAktivtSpørsmål() {
-const spørsmålIndex = currentQuizData.aktivtSpørsmålIndex;
-const spørsmål = currentQuizData.spørsmål[spørsmålIndex];
-const container = document.getElementById('spørsmål-container');
+function visAktivtSprsml() {
+const sprsmlIndex = currentQuizData.aktivtSprsmlIndex;
+const sprsml = currentQuizData.sprsml[sprsmlIndex];
+const container = document.getElementById('sprsml-container');
 
-// Opprett liste med svaralternativer i tilfeldig rekkefølge
+// Opprett liste med svaralternativer i tilfeldig rekkeflge
 const svaralternativer = [
-  { tekst: spørsmål.riktig_svar, erRiktig: true },
-  { tekst: spørsmål.feil_svar_1, erRiktig: false },
-  { tekst: spørsmål.feil_svar_2, erRiktig: false },
-  { tekst: spørsmål.feil_svar_3, erRiktig: false }
+  { tekst: sprsml.riktig_svar, erRiktig: true },
+  { tekst: sprsml.feil_svar_1, erRiktig: false },
+  { tekst: sprsml.feil_svar_2, erRiktig: false },
+  { tekst: sprsml.feil_svar_3, erRiktig: false }
 ];
 
 // Bland svaralternativene
@@ -360,18 +365,18 @@ for (let i = svaralternativer.length - 1; i > 0; i--) {
   [svaralternativer[i], svaralternativer[j]] = [svaralternativer[j], svaralternativer[i]];
 }
 
-// Bygg HTML for spørsmålet
+// Bygg HTML for sprsmlet
 let html = `
-  <div class="spørsmål" data-id="${spørsmål.id}">
-    <h3>Spørsmål ${spørsmålIndex + 1} av ${currentQuizData.spørsmål.length}</h3>
-    <p>${spørsmål.spørsmålstekst}</p>
+  <div class="sprsml" data-id="${sprsml.id}">
+    <h3>Sprsml ${sprsmlIndex + 1} av ${currentQuizData.sprsml.length}</h3>
+    <p>${sprsml.sprsmlstekst}</p>
     <ul class="svaralternativer">
 `;
 
 svaralternativer.forEach((alt, i) => {
   html += `
-    <li class="svaralternativ ${currentQuizData.svar[spørsmålIndex] === alt.tekst ? 'valgt' : ''}" 
-        onclick="velgSvar(${spørsmålIndex}, '${alt.tekst}', '${spørsmål.riktig_svar}')">
+    <li class="svaralternativ ${currentQuizData.svar[sprsmlIndex] === alt.tekst ? 'valgt' : ''}" 
+        onclick="velgSvar(${sprsmlIndex}, '${alt.tekst}', '${sprsml.riktig_svar}')">
       ${alt.tekst}
     </li>
   `;
@@ -385,14 +390,14 @@ html += `
 container.innerHTML = html;
 
 // Oppdater navigasjonsknapper
-document.getElementById('forrige-knapp').disabled = spørsmålIndex === 0;
-document.getElementById('neste-knapp').style.display = spørsmålIndex === currentQuizData.spørsmål.length - 1 ? 'none' : 'block';
-document.getElementById('fullfør-knapp').style.display = spørsmålIndex === currentQuizData.spørsmål.length - 1 ? 'block' : 'none';
+document.getElementById('forrige-knapp').disabled = sprsmlIndex === 0;
+document.getElementById('neste-knapp').style.display = sprsmlIndex === currentQuizData.sprsml.length - 1 ? 'none' : 'block';
+document.getElementById('fullfr-knapp').style.display = sprsmlIndex === currentQuizData.sprsml.length - 1 ? 'block' : 'none';
 }
 
-async function velgSvar(spørsmålIndex, valgtSvar, riktigSvar) {
+async function velgSvar(sprsmlIndex, valgtSvar, riktigSvar) {
 // Oppdater svar i currentQuizData
-currentQuizData.svar[spørsmålIndex] = valgtSvar;
+currentQuizData.svar[sprsmlIndex] = valgtSvar;
 
 // Oppdater visuell indikator
 const svaralternativer = document.querySelectorAll('.svaralternativ');
@@ -405,14 +410,14 @@ svaralternativer.forEach(alt => {
 
 // Lagre svaret i databasen
 try {
-  const spørsmålId = currentQuizData.spørsmål[spørsmålIndex].id;
+  const sprsmlId = currentQuizData.sprsml[sprsmlIndex].id;
   
   await fetch('http://localhost:3000/api/quiz/svar', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       besvarelse_id: currentQuizData.besvarelseId,
-      spørsmål_id: spørsmålId,
+      sprsml_id: sprsmlId,
       gitt_svar: valgtSvar,
       riktig_svar: riktigSvar
     })
@@ -422,31 +427,31 @@ try {
 }
 }
 
-function navigerTilForrigeSpørsmål() {
-if (currentQuizData.aktivtSpørsmålIndex > 0) {
-  currentQuizData.aktivtSpørsmålIndex--;
-  visAktivtSpørsmål();
+function navigerTilForrigeSprsml() {
+if (currentQuizData.aktivtSprsmlIndex > 0) {
+  currentQuizData.aktivtSprsmlIndex--;
+  visAktivtSprsml();
 }
 }
 
-function navigerTilNesteSpørsmål() {
-if (currentQuizData.aktivtSpørsmålIndex < currentQuizData.spørsmål.length - 1) {
-  currentQuizData.aktivtSpørsmålIndex++;
-  visAktivtSpørsmål();
+function navigerTilNesteSprsml() {
+if (currentQuizData.aktivtSprsmlIndex < currentQuizData.sprsml.length - 1) {
+  currentQuizData.aktivtSprsmlIndex++;
+  visAktivtSprsml();
 }
 }
 
-async function fullførQuiz(tidUtløpt = false) {
-// Stopp tidtakeren hvis den kjører
+async function fullfrQuiz(tidUtlpt = false) {
+// Stopp tidtakeren hvis den kjrer
 if (currentQuizData.timer) {
   clearInterval(currentQuizData.timer);
 }
 
-// Sjekk om alle spørsmål er besvart
+// Sjekk om alle sprsml er besvart
 const ubesvarte = currentQuizData.svar.filter(s => s === null).length;
 
-if (!tidUtløpt && ubesvarte > 0) {
-  const bekreft = confirm(`Du har ${ubesvarte} ubesvarte spørsmål. Er du sikker på at du vil fullføre quizen?`);
+if (!tidUtlpt && ubesvarte > 0) {
+  const bekreft = confirm(`Du har ${ubesvarte} ubesvarte sprsml. Er du sikker p at du vil fullfre quizen?`);
   if (!bekreft) return;
 }
 
@@ -468,23 +473,23 @@ try {
     document.getElementById('quiz-resultat').style.display = 'block';
     
     const antallRiktige = resultatData.poengsum;
-    const totalAntall = currentQuizData.spørsmål.length;
+    const totalAntall = currentQuizData.sprsml.length;
     const prosentRiktig = Math.round((antallRiktige / totalAntall) * 100);
     
     document.getElementById('poengsum').innerHTML = `
-      Du fikk <strong>${antallRiktige} av ${totalAntall}</strong> spørsmål riktig (${prosentRiktig}%).
+      Du fikk <strong>${antallRiktige} av ${totalAntall}</strong> sprsml riktig (${prosentRiktig}%).
     `;
     
     // Vis detaljert resultat
     let detaljerHTML = '<h3>Detaljert resultat</h3><ul>';
     
-    currentQuizData.spørsmål.forEach((sp, i) => {
+    currentQuizData.sprsml.forEach((sp, i) => {
       const svar = currentQuizData.svar[i];
       const erRiktig = svar === sp.riktig_svar;
       
       detaljerHTML += `
         <li style="margin-bottom: 15px; ${erRiktig ? 'color: green;' : 'color: red;'}">
-          <strong>Spørsmål ${i + 1}:</strong> ${sp.spørsmålstekst}<br>
+          <strong>Sprsml ${i + 1}:</strong> ${sp.sprsmlstekst}<br>
           <strong>Ditt svar:</strong> ${svar || 'Ikke besvart'}<br>
           <strong>Riktig svar:</strong> ${sp.riktig_svar}
         </li>
@@ -498,7 +503,7 @@ try {
   }
 } catch (err) {
   console.error('Feil ved API-kall:', err);
-  alert('En feil oppstod ved vurdering av quizen. Prøv igjen senere.');
+  alert('En feil oppstod ved vurdering av quizen. Prv igjen senere.');
 }
 }
 
@@ -508,8 +513,8 @@ function initResultaterSide() {
 const bruker = hentBruker();
 if (!bruker) return;
 
-if (bruker.rolle === 'lærer') {
-  document.getElementById('lærer-resultater').style.display = 'block';
+if (bruker.rolle === 'lrer') {
+  document.getElementById('lrer-resultater').style.display = 'block';
   lastQuizVelger();
 } else {
   document.getElementById('elev-resultater').style.display = 'block';
@@ -549,20 +554,20 @@ try {
   resultatTabell.innerHTML = '';
   
   if (resultater.length === 0) {
-    resultatTabell.innerHTML = '<tr><td colspan="4">Ingen resultater for denne quizen ennå.</td></tr>';
+    resultatTabell.innerHTML = '<tr><td colspan="4">Ingen resultater for denne quizen enn.</td></tr>';
     document.getElementById('statistikk-oversikt').style.display = 'none';
     return;
   }
   
   let totalPoengsum = 0;
-  let høyesteScore = 0;
+  let hyesteScore = 0;
   let lavesteScore = Number.MAX_VALUE;
   
   resultater.forEach((r) => {
     const tr = document.createElement('tr');
     
     // Formater dato
-    const dato = new Date(r.fullført_dato);
+    const dato = new Date(r.fullfrt_dato);
     const formatertDato = dato.toLocaleDateString('no-NO', { 
       year: 'numeric', 
       month: 'short', 
@@ -582,7 +587,7 @@ try {
     
     // Oppdater statistikk
     totalPoengsum += r.poengsum;
-    høyesteScore = Math.max(høyesteScore, r.poengsum);
+    hyesteScore = Math.max(hyesteScore, r.poengsum);
     lavesteScore = Math.min(lavesteScore, r.poengsum);
   });
   
@@ -591,10 +596,10 @@ try {
   
   const gjennomsnitt = totalPoengsum / resultater.length;
   document.getElementById('gjennomsnitt').textContent = `Gjennomsnittlig poengsum: ${gjennomsnitt.toFixed(1)}`;
-  document.getElementById('høyeste-score').textContent = `Høyeste score: ${høyesteScore}`;
+  document.getElementById('hyeste-score').textContent = `Hyeste score: ${hyesteScore}`;
   document.getElementById('laveste-score').textContent = `Laveste score: ${lavesteScore}`;
   
-  // Her kan du implementere en graf hvis du ønsker, f.eks. med Chart.js
+  // Her kan du implementere en graf hvis du nsker, f.eks. med Chart.js
   
 } catch (err) {
   console.error('Feil ved henting av resultater:', err);
@@ -602,7 +607,7 @@ try {
 }
 
 function visDetaljer(besvarelseId) {
-// Dette kan implementeres senere for å vise detaljerte svar for en besvarelse
+// Dette kan implementeres senere for  vise detaljerte svar for en besvarelse
 alert('Detaljvisning kommer snart!');
 }
 
@@ -615,7 +620,7 @@ try {
   progresjonTabell.innerHTML = '';
   
   if (progresjon.length === 0) {
-    progresjonTabell.innerHTML = '<tr><td colspan="3">Du har ikke tatt noen quizer ennå.</td></tr>';
+    progresjonTabell.innerHTML = '<tr><td colspan="3">Du har ikke tatt noen quizer enn.</td></tr>';
     document.getElementById('progresjon-graf').style.display = 'none';
     return;
   }
@@ -624,7 +629,7 @@ try {
     const tr = document.createElement('tr');
     
     // Formater dato
-    const dato = new Date(p.fullført_dato);
+    const dato = new Date(p.fullfrt_dato);
     const formatertDato = dato.toLocaleDateString('no-NO', { 
       year: 'numeric', 
       month: 'short', 
@@ -640,7 +645,7 @@ try {
     progresjonTabell.appendChild(tr);
   });
   
-  // Her kan du implementere en graf for å vise progresjonen over tid
+  // Her kan du implementere en graf for  vise progresjonen over tid
   
 } catch (err) {
   console.error('Feil ved henting av progresjon:', err);
